@@ -25,7 +25,16 @@ fn main() {
             calories = 0;
         }
     }
-    // println!("{:?}", total_cals);
-    let max = total_cals.iter().max().unwrap();
-    println!("The elf with the most calories has {max}.");
+    total_cals.sort_unstable();
+    total_cals.reverse();
+    //println!("{:?}", total_cals);
+    let gold = total_cals[0];
+    let silver = total_cals[1];
+    let bronze = total_cals[2];
+    let combined = gold+silver+bronze;
+    println!("The elf with the most calories has {gold}.");
+    println!("The elf with the next most calories has {silver}.");
+    println!("The elf with the next most calories has {bronze}.");
+    println!("Together the top three elves have {combined}.");
+
 }
