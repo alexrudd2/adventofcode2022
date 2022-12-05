@@ -9,8 +9,14 @@ fn main() {
     let reader = BufReader::new(input);
     let lines: Vec<_> = reader.lines().collect();
     let mut total_priorities: i32 = 0;
+
+    let mut group_position: u8 = 0;
+    let mut rucksack1 = String::from('*');
+    let mut rucksack2 = String::from('*');
+    let mut total_group_badge_priorities: i32 = 0;
+
     for line in lines {
-        let rucksack = line.as_ref().expect("Could not parse line").trim();
+        let rucksack: String = line.as_ref().expect("Could not parse line").trim().to_string();
         let compartment_size = rucksack.len() / 2;
         let compartment1 = &rucksack[0..compartment_size];
         let compartment2 = &rucksack[(compartment_size)..rucksack.len()];
@@ -22,8 +28,24 @@ fn main() {
                 break;
             }
         }
+        group_position += 1;
+        match group_position {
+            1 => rucksack1 = rucksack,
+            2 => rucksack2 = rucksack,
+            3 => {
+                group_position = 0;
+                for item in rucksack.chars() {
+                    if rucksack1.contains(item) && rucksack2.contains(item) {
+                        total_group_badge_priorities += calculate_priority(item) as i32;
+                        break;
+                    }
+                }
+            },
+            _ => continue,
+        }
     }
-    println!("The total of item priorities that are in both compartments is {total_priorities}.")
+    println!("The total of item priorities that are in both compartments is {total_priorities}.");
+    println!("The total of badge priorities for all groups is {total_group_badge_priorities}.");
     println!("Elf logistics are even worse than human logistics, it seems.");
 }
 
