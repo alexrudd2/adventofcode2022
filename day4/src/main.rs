@@ -8,6 +8,7 @@ fn main() {
     let reader = BufReader::new(input);
     let lines: Vec<_> = reader.lines().collect();
 
+    let mut total_contains: i32 = 0;
     let mut total_overlaps: i32 = 0;
 
     for line in lines {
@@ -26,10 +27,16 @@ fn main() {
         if (first_start <= second_start && first_end >= second_end) ||
            (second_start <= first_start && second_end >= first_end) {
             //println!("{}-{}, {}-{}", first_start, first_end, second_start, second_end);
-            total_overlaps += 1;
+            total_contains += 1;
         }
+        if (first_start <= second_start && second_start <= first_end) || 
+           (second_start <= first_start && first_start <= second_end ) {
+            //println!("{}-{}, {}-{}", first_start, first_end, second_start, second_end);
+            total_overlaps += 1;
+     }
 
     }
-    println!("The total of total assignment overlaps is {total_overlaps}.");
+    println!("The total of total assignment overlaps is {total_contains}.");
+    println!("The total of partial assignment overlaps is {total_overlaps}.");
     println!("Elves are always looking for a way to get out of doing work.");
 }
