@@ -16,7 +16,7 @@ fn main() {
     let mut total_group_badge_priorities: i32 = 0;
 
     for line in lines {
-        let rucksack: String = line.as_ref().expect("Could not parse line").trim().to_string();
+        let rucksack: String = line.expect("Could not parse line").trim().to_string();
         let compartment_size = rucksack.len() / 2;
         let compartment1 = &rucksack[0..compartment_size];
         let compartment2 = &rucksack[(compartment_size)..rucksack.len()];
