@@ -1,10 +1,9 @@
 use std::fs::File;
-use std::io::BufReader;
 use std::io::BufRead;
+use std::io::BufReader;
 
 fn main() {
-
-    let input = File::open("../input.txt").expect("Could not read input");    
+    let input = File::open("../input.txt").expect("Could not read input");
     let reader = BufReader::new(input);
     let lines: Vec<_> = reader.lines().collect();
 
@@ -24,17 +23,18 @@ fn main() {
         let second_vec: Vec<&str> = second_assign.split('-').collect();
         let second_start = second_vec[0].parse::<i8>().unwrap();
         let second_end = second_vec[1].parse::<i8>().unwrap();
-        if (first_start <= second_start && first_end >= second_end) ||
-           (second_start <= first_start && second_end >= first_end) {
+        if (first_start <= second_start && first_end >= second_end)
+            || (second_start <= first_start && second_end >= first_end)
+        {
             //println!("{}-{}, {}-{}", first_start, first_end, second_start, second_end);
             total_contains += 1;
         }
-        if (first_start <= second_start && second_start <= first_end) || 
-           (second_start <= first_start && first_start <= second_end ) {
+        if (first_start <= second_start && second_start <= first_end)
+            || (second_start <= first_start && first_start <= second_end)
+        {
             //println!("{}-{}, {}-{}", first_start, first_end, second_start, second_end);
             total_overlaps += 1;
-     }
-
+        }
     }
     println!("The total of total assignment overlaps is {total_contains}.");
     println!("The total of partial assignment overlaps is {total_overlaps}.");
