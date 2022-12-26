@@ -31,7 +31,30 @@ impl Pos {
         }
         successors
     }
+    fn get_successors_any(
+        &self,
+        hill: &ArrayBase<OwnedRepr<i8>, Dim<[usize; 2]>>,
+        rows: usize,
+        cols: usize,
+    ) -> Vec<Pos> {
+        let mut successors = Vec::new();
+        let &Pos(r, c) = self;
+        if r > 0 && (hill[[r - 1, c]] + 1 >= hill[[r, c]]) {
+            successors.push(Pos(r - 1, c));
+        }
+        if r < rows - 1 && (hill[[r + 1, c]] + 1 >= hill[[r, c]]) {
+            successors.push(Pos(r + 1, c));
+        }
+        if c > 0 && (hill[[r, c - 1]] + 1 >= hill[[r, c]]) {
+            successors.push(Pos(r, c - 1));
+        }
+        if c < cols - 1 && (hill[[r, c + 1]] + 1 >= hill[[r, c]]) {
+            successors.push(Pos(r, c + 1));
+        }
+        successors
+    }
 }
+
 fn main() {
     let input = File::open("../input.txt").expect("Could not read input");
     let reader = BufReader::new(input);
@@ -79,4 +102,13 @@ fn main() {
         start_pos, end_pos, shortest_path
     ); //440
     println!("Wouldn't it be easier to borrow the sleigh and reindeer?");
+
+    // for part 2, go in reverse to any elevation 1 (a)
+    let result_any = bfs(
+        &end_pos,
+        |p| p.get_successors_any(&hill, rows, cols),
+        |p| hill[[p.0, p.1]] == 1,
+    );
+    let shortest_path_any = result_any.expect("no path found").len() - 1;
+    println!("\nThe shortest path from any 'a' is {shortest_path_any}.");
 }
