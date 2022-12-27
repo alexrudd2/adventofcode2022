@@ -1,7 +1,7 @@
+use std::cmp::Ordering;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
-
 enum LineType {
     LS,
     CD,
@@ -13,9 +13,26 @@ struct FileNode {
     path: String,
     size: i32,
 }
+
+#[derive(Eq)]
 struct DirNode {
     path: String,
     size: i32,
+}
+impl Ord for DirNode {
+    fn cmp(&self, other: &DirNode) -> Ordering {
+        self.size.cmp(&other.size)
+    }
+}
+impl PartialOrd for DirNode {
+    fn partial_cmp(&self, other: &DirNode) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl PartialEq for DirNode {
+    fn eq(&self, other: &DirNode) -> bool {
+        self.size == other.size
+    }
 }
 fn main() {
     let input = File::open("../input.txt").expect("Could not read input");
@@ -65,7 +82,7 @@ fn main() {
         }
     }
     let mut total_size = 0;
-    for mut dir in dirs {
+    for mut dir in &mut dirs {
         for file in &files {
             if file.path.starts_with(&dir.path) {
                 dir.size += file.size;
@@ -77,6 +94,19 @@ fn main() {
     }
     println!("The total size of files under directories is {total_size}.");
     println!("Are elf files smaller than normal files?");
+
+    let total_space = 70000000;
+    let update_space = 30000000;
+    let total_used = dirs[0].size;
+    let required_deletes = update_space - (total_space - total_used);
+    dirs.sort();
+    for dir in dirs {
+        if dir.size >= required_deletes {
+            println!("To free enough space ({}), delete {}.", dir.size, dir.path);
+            break;
+        }
+    }
+    println!("It was probably junk, anyways.") //549173
 }
 
 fn determine_type(line: &str) -> LineType {
