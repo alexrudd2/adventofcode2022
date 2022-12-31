@@ -62,6 +62,17 @@ fn main() {
             y += 1;
         }
     }
+    print_cave(&cave, rows, cols);
+    println!("\n{total} grains of sand fell in the cave.");
+
+    for i in 0..cols {
+        cave[[rows - 1, i]] = 8;
+    }
+    print_cave(&cave, rows, cols);
+
+}
+
+fn print_cave(cave: &Array2<i32>, rows: usize, cols: usize) {
     for j in 0..rows {
         for k in 0..cols {
             if cave[[j, k]] == 0 {
@@ -74,5 +85,4 @@ fn main() {
         }
         print!("\n");
     }
-    println!("\n{total} grains of sand fell in the cave.");
 }
