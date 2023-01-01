@@ -31,58 +31,38 @@ fn main() {
         }
     }
     let rows = (max_y + 1) as usize;
-    let cols: usize = (max_x - min_x + 1) as usize;
-    let x_offset = min_x; //493 for example
-    // let y_offset = 0;
+    let cols: usize = (max_x - min_x + 2) as usize;
+    let x_offset = min_x - 1; //493 for example
+    let y_offset = 0;
     let mut cave = Array2::<i32>::default((rows, cols));
-    for wall in walls {
-        let start_x = wall.0 - x_offset;
-        let start_y = wall.1;
-        let end_x = wall.2 - x_offset;
-        let end_y = wall.3;
-        if start_x == end_x && start_y < end_y {
-            for y in start_y..=end_y {
-                cave[[y as usize, start_x as usize]] = 8;
+    fill_walls(&mut cave, &walls, x_offset, y_offset);
+
+    // part 1
+    let mut total: i32 = 0;
+    'outer: for i in 1..=1000 {
+        println!("{i}");
+        let mut x = 500 - x_offset as usize; let mut y = 0;
+        loop {
+            if y + 1 == rows { 
+                total = i - 1;
+                break 'outer; 
             }
-        } else if start_x == end_x && start_y > end_y {
-            for y in end_y..=start_y {
-                cave[[y as usize, start_x as usize]] = 8;
+            if cave[[y + 1, x]] != 0 {
+                if cave[[y + 1, x - 1]] == 0 {
+                    x -= 1;
+                } else if cave[[y + 1, x + 1]] == 0 {
+                    x += 1;
+                } else {
+                    cave[[y, x]] = 1;
+                    break;
+                }
             }
-        } else if start_y == end_y && start_x < end_x {
-            for x in start_x..=end_x {
-                cave[[start_y as usize, x as usize]] = 8;
-            }
-        } else if start_y == end_y && start_x > end_x {
-            for x in end_x..=start_x {
-                cave[[start_y as usize, x as usize]] = 8;
-            }
+            y += 1;
         }
     }
     print_cave(&cave, rows, cols);
+    println!("\n{total} grains of sand fell in the cave.");
 }
-//     let mut total: i32 = 0;
-//     'outer: for i in 1..=1000 {
-//         let mut x = 500 - x_offset as usize; let mut y = 0;
-//         loop {
-//             if y + 1 == rows { 
-//                 total = i - 1;
-//                 break 'outer; 
-//             }
-//             if cave[[y + 1, x]] != 0 {
-//                 if cave[[y + 1, x - 1]] == 0 {
-//                     x -= 1;
-//                 } else if cave[[y + 1, x + 1]] == 0 {
-//                     x += 1;
-//                 } else {
-//                     cave[[y, x]] = 1;
-//                     break;
-//                 }
-//             }
-//             y += 1;
-//         }
-//     }
-//     print_cave(&cave, rows, cols);
-//     println!("\n{total} grains of sand fell in the cave.");
 
 //     // part 2
 //     for i in 0..cols {
@@ -128,5 +108,31 @@ fn print_cave(cave: &Array2<i32>, rows: usize, cols: usize) {
             }
         }
         print!("\n");
+    }
+}
+
+fn fill_walls(cave: &mut Array2<i32>, walls: &Vec<(i32, i32, i32, i32)>, x_offset: i32, y_offset: i32) {
+    for wall in walls {
+        let start_x = wall.0 - x_offset;
+        let start_y = wall.1;
+        let end_x = wall.2 - x_offset;
+        let end_y = wall.3;
+        if start_x == end_x && start_y < end_y {
+            for y in start_y..=end_y {
+                cave[[y as usize, start_x as usize]] = 8;
+            }
+        } else if start_x == end_x && start_y > end_y {
+            for y in end_y..=start_y {
+                cave[[y as usize, start_x as usize]] = 8;
+            }
+        } else if start_y == end_y && start_x < end_x {
+            for x in start_x..=end_x {
+                cave[[start_y as usize, x as usize]] = 8;
+            }
+        } else if start_y == end_y && start_x > end_x {
+            for x in end_x..=start_x {
+                cave[[start_y as usize, x as usize]] = 8;
+            }
+        }
     }
 }
