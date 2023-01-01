@@ -7,10 +7,10 @@ fn main() {
     let input = File::open("../input.txt").expect("Could not read input");
     let reader = BufReader::new(input);
     let lines: Vec<_> = reader.lines().collect();
-    let rows = 162;
-    let cols: usize = 55;
-    let x_offset = 479; //493 for example
-    let y_offset = 6;
+    let rows = 170;
+    let cols: usize = 340;
+    let x_offset = 340; //493 for example
+    let y_offset = 0;
     let mut cave = Array2::<i32>::default((rows, cols));
     for l in lines {
         let line = l.expect("Could not parse line").trim().to_string();
@@ -55,7 +55,7 @@ fn main() {
                 } else if cave[[y + 1, x + 1]] == 0 {
                     x += 1;
                 } else {
-                    cave[[y, x]] = i;
+                    cave[[y, x]] = 1;
                     break;
                 }
             }
@@ -65,9 +65,34 @@ fn main() {
     print_cave(&cave, rows, cols);
     println!("\n{total} grains of sand fell in the cave.");
 
+    // part 2
     for i in 0..cols {
         cave[[rows - 1, i]] = 8;
     }
+
+    total = 0;
+    'outer: for i in 1..=21588 {
+        let mut x = 500 - x_offset as usize; let mut y = 0;
+        println!("{i}");
+        loop {
+            if cave[[y + 1, x]] != 0 {
+                if cave[[y + 1, x - 1]] == 0 {
+                    x -= 1;
+                } else if cave[[y + 1, x + 1]] == 0 {
+                    x += 1;
+                } else if y == 0 {
+                    println!("BOOM");
+                    total = i - 1;
+                    break 'outer;
+                } else {
+                    cave[[y, x]] = 1;
+                    break;
+                }
+            }
+            y += 1;
+        }
+    }
+    println!("{total}");
     print_cave(&cave, rows, cols);
 
 }
