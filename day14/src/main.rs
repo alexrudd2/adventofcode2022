@@ -30,71 +30,55 @@ fn main() {
         walls.push((start_x, start_y, end_x, end_y));
         }
     }
-    let rows = (max_y + 1) as usize;
-    let cols: usize = (max_x - min_x + 2) as usize;
-    let x_offset = min_x - 1; //493 for example
+    let mut rows = (max_y + 1) as usize;
+    let mut cols: usize = (max_x - min_x + 2) as usize;
+    let mut x_offset = min_x - 1; //493 for example
     let y_offset = 0;
     let mut cave = Array2::<i32>::default((rows, cols));
     fill_walls(&mut cave, &walls, x_offset, y_offset);
 
     // part 1
-    let mut total: i32 = 0;
-    'outer: for i in 1..=1000 {
-        println!("{i}");
-        let mut x = 500 - x_offset as usize; let mut y = 0;
-        loop {
-            if y + 1 == rows { 
-                total = i - 1;
-                break 'outer; 
-            }
-            if cave[[y + 1, x]] != 0 {
-                if cave[[y + 1, x - 1]] == 0 {
-                    x -= 1;
-                } else if cave[[y + 1, x + 1]] == 0 {
-                    x += 1;
-                } else {
-                    cave[[y, x]] = 1;
-                    break;
-                }
-            }
-            y += 1;
-        }
-    }
+    // 'outer: for i in 1..=1000 {
+    //     let mut x = 500 - x_offset as usize; let mut y = 0;
+    //     loop {
+    //         if y + 1 == rows { 
+    //             total = i - 1;
+    //             break 'outer; 
+    //         }
+    //         if cave[[y + 1, x]] != 0 {
+    //             if cave[[y + 1, x - 1]] == 0 {
+    //                 x -= 1;
+    //             } else if cave[[y + 1, x + 1]] == 0 {
+    //                 x += 1;
+    //             } else if y == 0 {
+    //                 total = i;
+    //                 break 'outer;
+    //             } else {
+    //                 cave[[y, x]] = 1;
+    //                 break;
+    //             }
+    //         }
+    //         y += 1;
+    //     }
+    // }
+    let mut total = drop_sand(&mut cave, x_offset, rows);
     print_cave(&cave, rows, cols);
-    println!("\n{total} grains of sand fell in the cave.");
+    println!("\n{total} grains of sand fell in the cave before falling into the abyss.");
+
+    // part 2
+    rows += 2;
+    cols = rows * 3;
+    x_offset -= rows as i32;
+    cave = Array2::<i32>::default((rows, cols));
+    fill_walls(&mut cave, &walls, x_offset, y_offset);
+    for i in 0..cols {
+        cave[[rows - 1, i]] = 8;
+    }
+    total = drop_sand(&mut cave, x_offset, rows);
+    print_cave(&cave, rows, cols);
+    println!("\n{total} grains of sand fell in the cave with a floor.");
+    println!("Did anyone bring skis?")
 }
-
-//     // part 2
-//     for i in 0..cols {
-//         cave[[rows - 1, i]] = 8;
-//     }
-
-//     total = 0;
-//     'outer: for i in 1..=21588 {
-//         let mut x = 500 - x_offset as usize; let mut y = 0;
-//         println!("{i}");
-//         loop {
-//             if cave[[y + 1, x]] != 0 {
-//                 if cave[[y + 1, x - 1]] == 0 {
-//                     x -= 1;
-//                 } else if cave[[y + 1, x + 1]] == 0 {
-//                     x += 1;
-//                 } else if y == 0 {
-//                     println!("BOOM");
-//                     total = i - 1;
-//                     break 'outer;
-//                 } else {
-//                     cave[[y, x]] = 1;
-//                     break;
-//                 }
-//             }
-//             y += 1;
-//         }
-//     }
-//     println!("{total}");
-//     print_cave(&cave, rows, cols);
-
-// }
 
 fn print_cave(cave: &Array2<i32>, rows: usize, cols: usize) {
     for j in 0..rows {
@@ -135,4 +119,29 @@ fn fill_walls(cave: &mut Array2<i32>, walls: &Vec<(i32, i32, i32, i32)>, x_offse
             }
         }
     }
+}
+
+fn drop_sand(cave: &mut Array2<i32>, x_offset: i32, rows: usize) -> i32 {
+    for i in 1..=100000 {
+        let mut x = 500 - x_offset as usize; let mut y: usize = 0;
+        loop {
+            if y + 1 == rows { //into the void
+                return i - 1;
+            }
+            if cave[[y + 1, x]] != 0 {
+                if cave[[y + 1, x - 1]] == 0 {
+                    x -= 1;
+                } else if cave[[y + 1, x + 1]] == 0 {
+                    x += 1;
+                } else if y == 0 { //at the start
+                    return i;
+                } else {
+                    cave[[y, x]] = 1;
+                    break;
+                }
+            }
+            y += 1;
+        }
+    }
+    return 0;
 }
