@@ -82,7 +82,7 @@ fn main() {
         }
     }
     let mut total_size = 0;
-    for mut dir in &mut dirs {
+    for dir in &mut dirs {
         for file in &files {
             if file.path.starts_with(&dir.path) {
                 dir.size += file.size;
